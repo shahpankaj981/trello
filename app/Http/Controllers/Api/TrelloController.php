@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\TrelloService;
 use App\Models\Column;
 use App\Models\Card;
+use Spatie\DbDumper\Databases\MySql;
 
 class TrelloController extends Controller
 {
@@ -52,6 +53,23 @@ class TrelloController extends Controller
         $this->trelloService->reorderCards($cardId, $request->all());
 
         return response()->json(['message' => 'Cards reordered successfully!!'], 200);
+    }
 
+    public function dumpSql(Request $request)
+    {
+        $pathToFile = base_path('dump.sql');
+        
+        // MySql::create()
+        //     ->setDumpBinaryPath('C:\wamp64\bin\mysql\mysql5.7.36\bin')
+        //     ->setDbName(env("DB_DATABASE"))
+        //     ->setUserName(env("DB_USERNAME"))
+        //     ->setPassword(env("DB_PASSWORD"))
+        //     ->setHost(env("DB_HOST"))
+        //     ->setPort(env("DB_PORT"))
+        //     ->dumpToFile($pathToFile);
+
+        shell_exec(" C:\wamp64\bin\mysql\mysql5.7.36\bin\mysqldump -h localhost -u root trello > {$pathToFile}");
+
+        return response()->download($pathToFile);
     }
 }

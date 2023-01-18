@@ -6,6 +6,7 @@
           </div>
           <div class="col-md 2">
             <button type="button" class="btn btn-block btn-success" @click="addColumn">Add Column</button>
+            <a href="/dump-sql" type="button" class="btn btn-secondary btn-block">Dump to SQL</a>
           </div>
         </div>
         <div class="row no-wrap" v-if="columns.length">
@@ -43,7 +44,7 @@
             class="btn-group list-group-item"
             role="group"
           >
-            <button class="btn btn-secondary btn-block" @click="addCard(column.id)">Add Card</button>
+          <button class="btn btn-secondary btn-block" @click="addCard(column.id)">Add Card</button>
           </div>
         </draggable>
       </div>

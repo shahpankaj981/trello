@@ -34,6 +34,7 @@ class TrelloController extends Controller
     public function deleteColumn(Request $request, $id)
     {
         $column = app(Column::class)->find($id);
+        $column->cards()->delete();
         $column->delete($id);
         
         return response()->json(['message' => 'Column Deleted successfully!'], 200);

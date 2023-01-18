@@ -19,6 +19,9 @@ Route::post('/columns', 'TrelloController@addColumn');
 Route::delete('/columns/{id}', 'TrelloController@deleteColumn');
 Route::get('/columns/{id}/cards', 'TrelloController@getCards');
 Route::put('/card/{id}/reorder' , 'TrelloController@reorderCards');
+Route::post('/card' , 'CardController@store');
+Route::put('/card/{id}' , 'CardController@update');
+Route::delete('/card/{id}' , 'CardController@destroy');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

@@ -11,6 +11,8 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import axios from 'axios';
+import modal from 'vue-js-modal';
+
 const axiosApiInstance = axios.create();
 axiosApiInstance.interceptors.request.use(
     async config => {
@@ -27,7 +29,8 @@ axiosApiInstance.interceptors.request.use(
   export {axiosApiInstance};
 
 
-window.Vue.use(BootstrapVue)
+  window.Vue.use(BootstrapVue)
+  window.Vue.use(modal);
 
 /**
  * The following block of code may be used to automatically register your

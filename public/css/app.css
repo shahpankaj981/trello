@@ -10827,3 +10827,8 @@ textarea.form-control-lg {
   display: flex;
   justify-content: end;
 }
+
+.pointer {
+  cursor: pointer;
+  font-size: 0.7em;
+}

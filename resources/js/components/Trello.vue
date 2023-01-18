@@ -1,5 +1,5 @@
 <template>
-    <div class="p-5">
+  <div class="p-5">
         <div class="row pb-5">
           <div class="col-md-4">
             <input type="text" placeholder="Column name.." v-model="new_column" class="form-control" />
@@ -30,50 +30,83 @@
             v-for="element in column.cards"
             :key="'card-'+element.id"
             :id="'card-'+element.id"
+            @click="handleEditCard(element)"
           >
+            <div>
+              <div class="pull-right pointer" @click.stop="handleDeleteCard(element.id)">X</div>
             {{ element.name }}
+            </div>
           </div>
   
           <div
             slot="header"
             class="btn-group list-group-item"
             role="group"
-            aria-label="Basic example"
           >
-            <button class="btn btn-secondary btn-block" @click="add">Add Card</button>
+            <button class="btn btn-secondary btn-block" @click="addCard(column.id)">Add Card</button>
           </div>
         </draggable>
       </div>
 
-    </div>
+        </div>
+        <CardModal :showModal="showModal" @close="handleCloseModal" @cardUpserted="fetchColumns" :card="card" :columnId="selectedColumnId" />
   </div>
   </template>
   
   <script>
-  import axios from 'axios';
   import draggable from "vuedraggable";
   import {axiosApiInstance} from '../app';
+  import CardModal from './CardModal.vue'
 
   export default {
-    display: "Two list header slot",
-    order: 14,
     components: {
-      draggable
+      draggable,
+      CardModal
     },
     data() {
       return {
+        showModal: false,
         columns: [],
         new_column: "",
+        selectedColumnId:null,
         list: [
         ],
+        card: {}
       };
     },
     mounted() {
       this.fetchColumns();
+      this.fillCardDefaultValues();
     },
     methods: {
-      add: function() {
-        this.list.push({ name: "Juan " + id, id: id++ });
+      fillCardDefaultValues() {
+        this.card =  {
+          id: null,
+          name:null,
+          description:null
+        };
+      },
+      addCard: function(columnId) {
+        this.showModal = true;
+        this.selectedColumnId = columnId;
+      },
+      handleEditCard(card) {
+        this.showModal = true;
+        this.card = {...card};
+      },
+      handleDeleteCard(id) {
+        if(confirm("Are you sure?")) {
+          axiosApiInstance.delete(`/api/card/${id}`)
+          .then(res => {
+            console.log("Deleted successfully.");
+            this.fetchColumns();
+          });
+        }
+      },
+      handleCloseModal(){
+        this.showModal=false;
+        this.selectedColumnId = null;
+        this.fillCardDefaultValues();
       },
       replace: function() {
         this.list = [{ name: "Edgard", id: id++ }];

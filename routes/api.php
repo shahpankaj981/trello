@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/columns', 'TrelloController@getColumns');
+Route::get('/columns', 'TrelloController@getData');
 Route::post('/columns', 'TrelloController@addColumn');
-Route::delete('/columns/{column}', 'TrelloController@deleteColumn');
+Route::delete('/columns/{id}', 'TrelloController@deleteColumn');
+Route::get('/columns/{id}/cards', 'TrelloController@getCards');
+Route::put('/card/{id}/reorder' , 'TrelloController@reorderCards');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

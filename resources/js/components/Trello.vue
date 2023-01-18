@@ -8,8 +8,8 @@
             <button type="button" class="btn btn-block btn-success" @click="addColumn">Add Column</button>
           </div>
         </div>
-        <div class="row no-wrap">
-          <div class="col-3" v-for="column in columns">
+        <div class="row no-wrap" v-if="columns.length">
+          <div class="col-3"  v-for="column in columns">
             <div class="row">
               <h3 class="col-md-9" v-text="column.name"></h3>
               <div class="col-md-3">
@@ -17,17 +17,19 @@
               </div>
             </div>
         <draggable
-          id={column.id}
+          :id="'column-' + column.id"
           data-source="juju"
-          :list="list"
+          :list="column.cards"
           class="list-group"
           draggable=".item"
           group="a"
+          @end="handleCardMove"
         >
           <div
             class="list-group-item item"
-            v-for="element in list"
-            :key="element.name"
+            v-for="element in column.cards"
+            :key="'card-'+element.id"
+            :id="'card-'+element.id"
           >
             {{ element.name }}
           </div>
@@ -52,7 +54,6 @@
   import draggable from "vuedraggable";
   import {axiosApiInstance} from '../app';
 
-  let id = 1;
   export default {
     display: "Two list header slot",
     order: 14,
@@ -64,11 +65,7 @@
         columns: [],
         new_column: "",
         list: [
-          { name: "John 1", id: 0 },
-          { name: "Joao 2", id: 1 },
-          { name: "Jean 3", id: 2 }
         ],
-        list2: [{ name: "Jonny 4", id: 3 }, { name: "Guisepe 5", id: 4 }]
       };
     },
     mounted() {
@@ -89,14 +86,14 @@
       },
       fetchColumns : function() {
         // const result = 
-        axiosApiInstance.get(`/api/columns`).then(res => {
-          console.log(res)
+        axiosApiInstance.get(`/api/columns`)
+        .then(res => {
           this.columns = res.data.columns;
         })
       },
       addColumn() {
         if(this.new_column) {
-          axios.post('/api/columns', {name: this.new_column})
+          axiosApiInstance.post('/api/columns', {name: this.new_column})
           .then(res => {
             alert("Column added succesfully");
             this.fetchColumns();
@@ -108,13 +105,46 @@
       },
       deleteColumn(id) {
         if(confirm("Are you sure you want to delte the column?")) {
-          axios.delete(`/api/columns/${id}`)
+          axiosApiInstance.delete(`/api/columns/${id}`)
           .then(res => {
             alert("Column deleted succesfully");
             this.fetchColumns();
           })
         }
-      }
+      },
+      handleCardMove: function(evt, labelId) {
+        
+        let fromLabelId = evt.from.id.replace('column-', '');
+        let toLabelId = evt.to.id.replace('column-', '');
+        let cardId = evt.clone.id.replace('card-', '');
+        let oldOrder = evt.oldIndex;
+        let newOrder = evt.newIndex;
+
+        if (fromLabelId === toLabelId && oldOrder === newOrder) {
+          return;
+        }
+        let data = {
+          from_column_id: fromLabelId,
+          to_column_id: toLabelId,
+          old_order: oldOrder,
+          new_order: newOrder
+        };
+        console.log(data);
+        
+        axiosApiInstance.put(`/api/card/${cardId}/reorder`, data)
+          .then(res => {
+
+          })
+          .catch(err => {
+            if (err.response.status === 403) {
+              location.reload();
+            }
+            console.log(err);
+
+            return false;
+          })
+      },
+
     }
   };
   </script>

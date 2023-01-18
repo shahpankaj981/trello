@@ -14,4 +14,10 @@ class Column extends Model
         'slug',
         'order'
     ];
+
+
+    public function cards()
+    {
+        return $this->hasMany(Card::class);
+    }
 }

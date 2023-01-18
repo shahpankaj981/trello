@@ -18,9 +18,9 @@ class TrelloController extends Controller
         $this->trelloService = $trelloService;
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
-        $columns = $this->trelloService->getData();
+        $columns = $this->trelloService->getData($request);
         
         return response()->json(['columns' => $columns], 200);
     }

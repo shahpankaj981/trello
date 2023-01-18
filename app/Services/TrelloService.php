@@ -14,7 +14,16 @@ class TrelloService
 {
     public function getData($filters = [])
     {
-        return app(Column::class)->with(['cards' => function($q) {
+       return app(Column::class)->with(['cards' => function($q) use($filters) {
+            if($filters->has('date') && $filters->get('date')) {
+                $q->whereDate('created_at', $filters->get('date'));
+            }
+            if($filters->has('status')) {
+                if($filters->get('status') == 0) {
+                    $q->onlyTrashed();
+                }
+            }
+
             return $q->orderBy('order')->orderBy('updated_at', 'desc');
         }])->orderBy('order')->get();
     }
@@ -44,7 +53,6 @@ class TrelloService
             DB::statement(sprintf("update cards set `order`=`order`+1 where `column_id`=%s and `order` >= %s", $updateData['to_column_id'], $updateData['new_order']));
 
             $card->update(['order' => $updateData['new_order'], 'column_id' => $updateData['to_column_id']]);
-            
         }
     }
 }

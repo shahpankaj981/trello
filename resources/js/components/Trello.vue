@@ -1,12 +1,28 @@
 <template>
   <div class="p-5">
         <div class="row pb-5">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <input type="text" placeholder="Column name.." v-model="new_column" class="form-control" />
           </div>
           <div class="col-md 2">
             <button type="button" class="btn btn-block btn-success" @click="addColumn">Add Column</button>
             <a href="/dump-sql" type="button" class="btn btn-secondary btn-block">Dump to SQL</a>
+          </div>
+          
+          <div class="col-md-6">
+            <h6 style="margin-top: -25px;">Filters</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <input type="date" class="form-control" placeholder="Filter Date (YYYY-MM-DD)" v-model="filters.date" @change="fetchColumns"/>
+              </div>
+              <div class="col-md-6">
+                <select class="form-control" v-model="filters.status" @change="fetchColumns">
+                  <option>Select Status</option>
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row no-wrap" v-if="columns.length">
@@ -72,7 +88,11 @@
         selectedColumnId:null,
         list: [
         ],
-        card: {}
+        card: {},
+        filters: {
+          status: 1,
+          date: ''
+        }
       };
     },
     mounted() {
@@ -119,8 +139,7 @@
         this.list2 = [{ name: "Edgard", id: id++ }];
       },
       fetchColumns : function() {
-        // const result = 
-        axiosApiInstance.get(`/api/columns`)
+        axiosApiInstance.get(`/api/columns`, {params: this.filters})
         .then(res => {
           this.columns = res.data.columns;
         })

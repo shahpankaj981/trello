@@ -22,6 +22,7 @@ class CreateCardsTable extends Migration
             $table->unsignedInteger('column_id');
             
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

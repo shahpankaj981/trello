@@ -35,6 +35,7 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::prefix('api')
                 ->namespace($this->namespace . '\Api')
+                ->middleware('token_checker')
                 ->group(base_path('routes/api.php'));
         });
     }

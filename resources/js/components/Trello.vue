@@ -50,6 +50,8 @@
   <script>
   import axios from 'axios';
   import draggable from "vuedraggable";
+  import {axiosApiInstance} from '../app';
+
   let id = 1;
   export default {
     display: "Two list header slot",
@@ -86,8 +88,8 @@
         this.list2 = [{ name: "Edgard", id: id++ }];
       },
       fetchColumns : function() {
-        axios.get(`/api/columns`)
-        .then(res => {
+        // const result = 
+        axiosApiInstance.get(`/api/columns`).then(res => {
           console.log(res)
           this.columns = res.data.columns;
         })

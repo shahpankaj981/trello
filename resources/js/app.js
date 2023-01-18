@@ -10,6 +10,22 @@ window.Vue = require('vue').default;
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import axios from 'axios';
+const axiosApiInstance = axios.create();
+axiosApiInstance.interceptors.request.use(
+    async config => {
+      const value = "123456789";
+      config.params = { 
+        ...config.params,
+        'access_token': value,
+      }
+      return config;
+    },
+    error => {
+      Promise.reject(error)
+  });
+  export {axiosApiInstance};
+
 
 window.Vue.use(BootstrapVue)
 
